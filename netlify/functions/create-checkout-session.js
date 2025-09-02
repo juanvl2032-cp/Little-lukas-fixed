@@ -1,7 +1,7 @@
 // netlify/functions/create-checkout-session.js
-import Stripe from "stripe";
+const Stripe = require("stripe");
 
-export async function handler(event) {
+exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
@@ -39,4 +39,4 @@ export async function handler(event) {
     console.error("Stripe error:", err);
     return { statusCode: 400, body: JSON.stringify({ error: err.message || "Stripe error" }) };
   }
-}
+};
