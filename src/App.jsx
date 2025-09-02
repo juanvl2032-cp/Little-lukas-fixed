@@ -1,78 +1,82 @@
-import { proceedToCheckout } from './checkout';
+import React, { useEffect, useMemo, useState } from "react";
+import { proceedToCheckout } from "./checkout.js"; // helper that POSTs to /.netlify/functions/create-checkout-session
 
 const PRODUCTS = [
   {
     id: "princess-castle",
     title: "Princess Castle",
-    description: `This beautiful cardstock castle is perfect for prince/princess birthdays—use as a centerpiece, party favor, decoration, or gift box. Customizable colors. Approx. 14" L × 10" W × 13" H.`,
+    description:
+      'This beautiful cardstock castle is perfect for prince/princess birthdays—use as a centerpiece, party favor, decoration, or gift box. Customizable colors. Approx. 14" L × 10" W × 13" H.',
     priceUSD: 65,
-    images: ["/biggercastle.jpg", "/biggercastle2.webp", "/biggercastle3.webp", "/biggercastle4.webp", "/biggercastle5.webp"],
+    images: [
+      "/biggercastle.jpg",
+      "/biggercastle2.webp",
+      "/biggercastle3.webp",
+      "/biggercastle4.webp",
+      "/biggercastle5.webp",
+    ],
     image: "/biggercastle.jpg",
     tags: ["Centerpieces", "Birthday"],
-    paymentLink: "https://buy.stripe.com/aFa5kv52K6aX4UJ1OZ7Re0g",
   },
   {
     id: "kitty-box",
     title: "Kitty-Birthday-Party-Goodie-Box",
-    description: `This kitty-themed goodie box is made of high-quality cardstock, perfect for birthday parties or gifts.
-This listing is for 10 boxes. Measurements: 7" L × 6" W × 3.25" H. Space for candies/gift: 4.5" diameter × 1.75" H.`,
+    description:
+      'This kitty-themed goodie box is made of high-quality cardstock, perfect for birthday parties or gifts.\nThis listing is for 10 boxes. Measurements: 7" L × 6" W × 3.25" H. Space for candies/gift: 4.5" diameter × 1.75" H.',
     priceUSD: 12,
     images: ["/kittyhat.webp", "/kittyhat2.webp", "/kittyhat3.webp", "/kittyhat4.webp"],
     image: "/kittyhat.webp",
     tags: ["Party Favors", "Kids", "Handmade"],
-    paymentLink: "https://buy.stripe.com/14A5kvdzg8j572R79j7Re0f",
   },
   {
     id: "princess-invitations",
     title: "Princess Birthday Party Invitations",
-    description: `These invitations are perfect for your princess birthday party. Made with high-quality cardstock.
-This listing is for 10 invitations. Measurements: 8.75" x 4.25"`,
+    description:
+      'These invitations are perfect for your princess birthday party. Made with high-quality cardstock.\nThis listing is for 10 invitations. Measurements: 8.75" x 4.25"',
     priceUSD: 30,
     images: ["/princessinvitation.webp"],
     image: "/princessinvitation.webp",
     tags: ["Invitations", "Kids", "Handmade"],
-    paymentLink: "https://buy.stripe.com/7sY5kvdzgczlevjbpz7Re0e",
   },
   {
     id: "sonics-hats",
     title: "Sonic Inspired Party Hats",
-    description: `Sonic Inspired Party Hats! This listing is for 10 hats. Handmade with high-quality materials. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.`,
+    description:
+      "Sonic Inspired Party Hats! This listing is for 10 hats. Handmade with high-quality materials. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.",
     priceUSD: 30,
     images: ["/sonicshat.jpg"],
     image: "/sonicshat.jpg",
     tags: ["Party Hats", "Kids", "Handmade", "Birthday"],
-    paymentLink: "https://buy.stripe.com/9B614f0Mu42Pcnbalv7Re0d",
   },
   {
     id: "sonic-boxes",
     title: "Sonic Inspired Goodie Boxes",
-    description: `Sonic-inspired goodie boxes. This listing is for 10 goodie boxes - H 6.75" x L 3.75" x W 3.75". Boxes hold up to 1/2 lb. If you need to put more weight, you can tape the bottom, and they will hold up to 1 lb.
-Boxes are shipped flat. Candies are not included. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.`,
+    description:
+      'Sonic-inspired goodie boxes. This listing is for 10 goodie boxes - H 6.75" x L 3.75" x W 3.75". Boxes hold up to 1/2 lb. If you need to put more weight, you can tape the bottom, and they will hold up to 1 lb.\nBoxes are shipped flat. Candies are not included. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.',
     priceUSD: 30,
     images: ["/sonicsbox.webp"],
     image: "/sonicsbox.webp",
     tags: ["Party Favors", "Kids", "Handmade", "Birthday"],
-    paymentLink: "https://buy.stripe.com/cNi00b66O1UH1IxgJT7Re0c",
   },
   {
     id: "sonic-hat",
     title: "Sonic Inspired Party Hat",
-    description: `Sonic Inspired Party Hat! This listing is for 10 hats. Handmade with high-quality materials. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.`,
+    description:
+      "Sonic Inspired Party Hat! This listing is for 10 hats. Handmade with high-quality materials. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.",
     priceUSD: 30,
     images: ["/sonichat.webp", "/sonichat2.webp"],
     image: "/sonichat.webp",
     tags: ["Party Hats", "Kids", "Handmade", "Birthday"],
-    paymentLink: "https://buy.stripe.com/9B6cMX66O1UH3QFeBL7Re0b",
   },
   {
     id: "sofia-bag",
     title: "Sophia the First Inspired Goodie Bags",
-    description: `This order is for 8 candy bags. Size: 4.7in x 2.8in x 8.9in. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.`,
+    description:
+      "This order is for 8 candy bags. Size: 4.7in x 2.8in x 8.9in. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.",
     priceUSD: 18,
     images: ["/sofiab.webp", "/sofiab2.webp"],
     image: "/sofiab.webp",
     tags: ["Party Bags", "Kids", "Handmade", "Birthday"],
-    paymentLink: "https://buy.stripe.com/9B64gr66OfLxdrfeBL7Re0a",
   },
 ];
 
@@ -87,7 +91,7 @@ export default function Storefront() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const t = (en, es) => (lang === "en" ? en : es);
 
-  // Persist cart between refreshes
+  // Persist cart
   useEffect(() => {
     const saved = localStorage.getItem("cart");
     if (saved) setCart(JSON.parse(saved));
@@ -106,10 +110,11 @@ export default function Storefront() {
     () =>
       PRODUCTS.filter((p) => {
         const mt = activeTag === "All" || p.tags.includes(activeTag);
+        const q = query.trim().toLowerCase();
         const mq =
-          !query ||
-          p.title.toLowerCase().includes(query.toLowerCase()) ||
-          p.description.toLowerCase().includes(query.toLowerCase());
+          !q ||
+          p.title.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q);
         return mt && mq;
       }),
     [activeTag, query]
@@ -138,9 +143,10 @@ export default function Storefront() {
   }
 
   function formatPrice(usd) {
-    return `${CURRENCY_SYMBOLS.USD}${usd.toFixed(2)}`;
+    return `${CURRENCY_SYMBOLS.USD}${(usd ?? 0).toFixed(2)}`;
   }
 
+  // Build detailed lines
   const cartDetailed = cart.map((l) => {
     const p = PRODUCTS.find((p) => p.id === l.id);
     return { ...l, product: p, lineTotalUSD: (p?.priceUSD || 0) * l.qty };
@@ -151,42 +157,19 @@ export default function Storefront() {
   const taxUSD = subtotalUSD * 0.0825;
   const totalUSD = subtotalUSD + shippingUSD + taxUSD;
 
-  // Stripe Checkout
-  async function startCheckout() {
-    try {
-      const payload = {
-        items: cartDetailed.map((item) => ({
-          price_data: {
-            currency: "usd",
-            product_data: { name: item.product.title },
-            unit_amount: Math.round(item.product.priceUSD * 100), // cents
-          },
-          quantity: Number(item.qty || 1),
-        })),
-        success_url: `${window.location.origin}/success`,
-        cancel_url: `${window.location.origin}/cancel`,
-      };
-
-      const res = await fetch("/.netlify/functions/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data?.url) {
-        throw new Error(data?.error || `Checkout failed (${res.status})`);
-      }
-
-      window.location.assign(data.url);
-    } catch (err) {
-      alert(err.message || "Error processing checkout. Please try again.");
-      console.error(err);
-    }
+  // Wrapper that calls your helper with the cart
+  function startCheckout() {
+    const items = cartDetailed.map((item) => ({
+      name: item.product.title,
+      priceUSD: item.product.priceUSD,
+      quantity: Number(item.qty || 1),
+    }));
+    return proceedToCheckout(items);
   }
 
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
+      {/* Header */}
       <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b border-neutral-200">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
           <div className="flex items-center gap-2">
@@ -229,14 +212,21 @@ export default function Storefront() {
         </div>
       </header>
 
+      {/* Hero */}
       <section className="bg-gradient-to-br from-pink-50 to-violet-50 border-b border-neutral-200">
         <div className="max-w-6xl mx-auto px-4 py-10 md:py-16 grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">
-              {t("Handmade party hats, clothes & shoes — for less", "Sombreros de fiesta, ropa y zapatos — a mejores precios")}
+              {t(
+                "Handmade party hats, clothes & shoes — for less",
+                "Sombreros de fiesta, ropa y zapatos — a mejores precios"
+              )}
             </h1>
             <p className="mt-3 text-neutral-700">
-              {t("Local to Round Rock–Hutto. We ship anywhere in the USA.", "Locales en Round Rock–Hutto. Enviamos a cualquier parte de EE.UU.")}
+              {t(
+                "Local to Round Rock–Hutto. We ship anywhere in the USA.",
+                "Locales en Round Rock–Hutto. Enviamos a cualquier parte de EE.UU."
+              )}
             </p>
             <div className="mt-5 flex gap-3">
               <a href="#catalog" className="rounded-2xl bg-pink-600 text-white px-4 py-2 font-semibold hover:bg-pink-700">
@@ -260,6 +250,7 @@ export default function Storefront() {
         </div>
       </section>
 
+      {/* Catalog */}
       <section id="catalog" className="max-w-6xl mx-auto px-4 py-6">
         <div className="flex flex-wrap items-center gap-2">
           {tags.map((tag) => (
@@ -274,6 +265,7 @@ export default function Storefront() {
             </button>
           ))}
         </div>
+
         <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map((p) => (
             <article
@@ -297,19 +289,22 @@ export default function Storefront() {
                     >
                       {t("Add to cart", "Agregar al carrito")}
                     </button>
-                    {p.paymentLink && (
-                      <a
-                        href={p.paymentLink}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="rounded-xl border border-neutral-300 px-3 py-2 text-sm font-semibold hover:bg-neutral-100"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Buy now (Stripe)
-                      </a>
-                    )}
+
+                    {/* Immediate buy for a single product */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        proceedToCheckout([
+                          { name: p.title, priceUSD: p.priceUSD, quantity: 1 },
+                        ]);
+                      }}
+                      className="rounded-xl border border-neutral-300 px-3 py-2 text-sm font-semibold hover:bg-neutral-100"
+                    >
+                      Buy now (Stripe)
+                    </button>
                   </div>
                 </div>
+
                 <div className="mt-3 flex flex-wrap gap-1">
                   {p.tags.map((tag) => (
                     <span key={tag} className="text-xs px-2 py-1 rounded-full bg-neutral-100 border border-neutral-200">
@@ -323,18 +318,46 @@ export default function Storefront() {
         </div>
       </section>
 
+      {/* Product modal (with Buy now) */}
       {selectedProduct && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={() => setSelectedProduct(null)}>
-          <div className="bg-white p-6 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center"
+          onClick={() => setSelectedProduct(null)}
+        >
+          <div
+            className="bg-white p-6 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2 className="text-2xl font-bold mb-4">{selectedProduct.title}</h2>
+
             <div className="grid grid-cols-2 gap-4 mb-4">
               {selectedProduct.images.map((img, index) => (
-                <img key={index} src={img} alt={`${selectedProduct.title} image ${index + 1}`} className="w-full h-48 object-cover rounded" />
+                <img
+                  key={index}
+                  src={img}
+                  alt={`${selectedProduct.title} image ${index + 1}`}
+                  className="w-full h-48 object-cover rounded"
+                />
               ))}
             </div>
+
             <p className="text-neutral-700 mb-4">{selectedProduct.description}</p>
-            <div className="flex justify-end">
-              <button onClick={() => setSelectedProduct(null)} className="rounded-xl bg-pink-600 text-white px-4 py-2 font-semibold hover:bg-pink-700">
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() =>
+                  proceedToCheckout([
+                    { name: selectedProduct.title, priceUSD: selectedProduct.priceUSD, quantity: 1 },
+                  ])
+                }
+                className="rounded-xl bg-emerald-600 text-white px-4 py-2 font-semibold hover:bg-emerald-700"
+              >
+                Buy now (Stripe)
+              </button>
+              <button
+                onClick={() => setSelectedProduct(null)}
+                className="rounded-xl bg-pink-600 text-white px-4 py-2 font-semibold hover:bg-pink-700"
+              >
                 Close
               </button>
             </div>
@@ -342,19 +365,28 @@ export default function Storefront() {
         </div>
       )}
 
+      {/* Promo strip */}
       <section className="max-w-6xl mx-auto px-4">
         <div className="rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-emerald-900">
           <p className="text-sm">
-            {t("Flat $6.99 US shipping • Easy returns • Secure checkout (Stripe)", "Envío fijo $6.99 en EE.UU. • Devoluciones fáciles • Pago seguro (Stripe)")}
+            {t(
+              "Flat $6.99 US shipping • Easy returns • Secure checkout (Stripe)",
+              "Envío fijo $6.99 en EE.UU. • Devoluciones fáciles • Pago seguro (Stripe)"
+            )}
           </p>
         </div>
       </section>
 
+      {/* Contact */}
       <section id="contact" className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid md:grid-cols-2 gap-6 items-start">
           <div className="rounded-3xl border border-neutral-200 p-6 bg-white">
-            <h2 className="text-2xl font-bold">{t("Questions? Message us", "¿Dudas? Escríbenos")}</h2>
-            <p className="text-neutral-600 mt-1">{t("We usually reply within a few hours.", "Normalmente respondemos en pocas horas.")}</p>
+            <h2 className="text-2xl font-bold">
+              {t("Questions? Message us", "¿Dudas? Escríbenos")}
+            </h2>
+            <p className="text-neutral-600 mt-1">
+              {t("We usually reply within a few hours.", "Normalmente respondemos en pocas horas.")}
+            </p>
             <form
               className="mt-4 grid gap-3"
               onSubmit={(e) => {
@@ -362,24 +394,51 @@ export default function Storefront() {
                 alert(t("Thanks! We'll get back to you soon.", "¡Gracias! Pronto te respondemos."));
               }}
             >
-              <input required placeholder={t("Your name", "Tu nombre")} className="rounded-xl border border-neutral-300 px-3 py-2" />
-              <input required type="email" placeholder="Email" className="rounded-xl border border-neutral-300 px-3 py-2" />
-              <textarea required placeholder={t("How can we help?", "¿Cómo te ayudamos?")} className="rounded-xl border border-neutral-300 px-3 py-2 min-h-[96px]" />
-              <button className="rounded-xl bg-pink-600 text-white px-4 py-2 font-semibold hover:bg-pink-700 w-fit">{t("Send", "Enviar")}</button>
+              <input
+                required
+                placeholder={t("Your name", "Tu nombre")}
+                className="rounded-xl border border-neutral-300 px-3 py-2"
+              />
+              <input
+                required
+                type="email"
+                placeholder="Email"
+                className="rounded-xl border border-neutral-300 px-3 py-2"
+              />
+              <textarea
+                required
+                placeholder={t("How can we help?", "¿Cómo te ayudamos?")}
+                className="rounded-xl border border-neutral-300 px-3 py-2 min-h-[96px]"
+              />
+              <button className="rounded-xl bg-pink-600 text-white px-4 py-2 font-semibold hover:bg-pink-700 w-fit">
+                {t("Send", "Enviar")}
+              </button>
             </form>
           </div>
+
           <div className="rounded-3xl border border-neutral-200 p-6 bg-white">
             <h3 className="font-bold text-lg">{t("Pickup & Shipping", "Entrega y Envíos")}</h3>
             <p className="text-neutral-700 mt-1">
-              {t("Local pickup in Round Rock–Hutto. We ship anywhere in the USA.", "Entrega local en Round Rock–Hutto. Envíos a todo EE.UU.")}
+              {t(
+                "Local pickup in Round Rock–Hutto. We ship anywhere in the USA.",
+                "Entrega local en Round Rock–Hutto. Envíos a todo EE.UU."
+              )}
             </p>
             <ul className="mt-3 list-disc ml-5 text-neutral-700 space-y-1">
               <li>{t("Flat $6.99 shipping (US)", "Tarifa de envío $6.99 (EE.UU.)")}</li>
             </ul>
             <div className="mt-4 text-sm text-neutral-600">
               <p>
-                {t("WhatsApp orders welcome: replace # with your number →", "Pedidos por WhatsApp bienvenidos: reemplaza # con tu número →")}{" "}
-                <a className="text-pink-700 underline" href="https://wa.me/1##########" target="_blank" rel="noreferrer">
+                {t(
+                  "WhatsApp orders welcome: replace # with your number →",
+                  "Pedidos por WhatsApp bienvenidos: reemplaza # con tu número →"
+                )}{" "}
+                <a
+                  className="text-pink-700 underline"
+                  href="https://wa.me/1##########"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   wa.me/1##########
                 </a>
               </p>
@@ -388,35 +447,56 @@ export default function Storefront() {
         </div>
       </section>
 
+      {/* Footer */}
       <footer className="border-t border-neutral-200 py-8 mt-6">
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-neutral-600">© {new Date().getFullYear()} Little Lukas Party Shop</p>
+          <p className="text-sm text-neutral-600">
+            © {new Date().getFullYear()} Little Lukas Party Shop
+          </p>
           <nav className="flex items-center gap-4 text-sm">
-            <a href="#" className="hover:underline">{t("Privacy", "Privacidad")}</a>
-            <a href="#" className="hover:underline">{t("Returns", "Devoluciones")}</a>
-            <a href="#" className="hover:underline">{t("Contact", "Contacto")}</a>
+            <a href="#" className="hover:underline">
+              {t("Privacy", "Privacidad")}
+            </a>
+            <a href="#" className="hover:underline">
+              {t("Returns", "Devoluciones")}
+            </a>
+            <a href="#" className="hover:underline">
+              {t("Contact", "Contacto")}
+            </a>
           </nav>
         </div>
       </footer>
 
+      {/* Cart drawer */}
       {openCart && (
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/30" onClick={() => setOpenCart(false)} />
           <aside className="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl p-5 flex flex-col">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold">{t("Your cart", "Tu carrito")}</h2>
-              <button onClick={() => setOpenCart(false)} className="rounded-full border px-3 py-1">✕</button>
+              <button onClick={() => setOpenCart(false)} className="rounded-full border px-3 py-1">
+                ✕
+              </button>
             </div>
+
             <div className="mt-4 flex-1 overflow-auto space-y-4">
               {cartDetailed.length === 0 ? (
-                <p className="text-neutral-600">{t("Your cart is empty.", "Tu carrito está vacío.")}</p>
+                <p className="text-neutral-600">
+                  {t("Your cart is empty.", "Tu carrito está vacío.")}
+                </p>
               ) : (
                 cartDetailed.map((line) => (
                   <div key={line.id} className="flex gap-3 border-b pb-3">
-                    <img src={line.product.images?.[0] ?? line.product.image} alt={line.product.title} className="w-16 h-16 object-cover rounded" />
+                    <img
+                      src={line.product.images?.[0] ?? line.product.image}
+                      alt={line.product.title}
+                      className="w-16 h-16 object-cover rounded"
+                    />
                     <div className="flex-1">
                       <div className="font-semibold">{line.product.title}</div>
-                      <div className="text-sm text-neutral-600">{formatPrice(line.product.priceUSD)}</div>
+                      <div className="text-sm text-neutral-600">
+                        {formatPrice(line.product.priceUSD)}
+                      </div>
                       <div className="mt-1 flex items-center gap-2 text-sm">
                         <label>{t("Qty", "Cant.")}</label>
                         <input
@@ -430,7 +510,10 @@ export default function Storefront() {
                     </div>
                     <div className="text-right">
                       <div className="font-semibold">{formatPrice(line.lineTotalUSD)}</div>
-                      <button className="text-xs text-red-600 underline mt-1" onClick={() => removeFromCart(line.id)}>
+                      <button
+                        className="text-xs text-red-600 underline mt-1"
+                        onClick={() => removeFromCart(line.id)}
+                      >
                         {t("Remove", "Quitar")}
                       </button>
                     </div>
