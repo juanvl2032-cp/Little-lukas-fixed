@@ -8,7 +8,7 @@ const PRODUCTS = [
     title: "Princess Castle",
     description:
       'This beautiful cardstock castle is perfect for prince/princess birthdays—use as a centerpiece, party favor, decoration, or gift box. Customizable colors. Approx. 14" L × 10" W × 13" H.',
-    priceId: "price_live_REPLACE_WITH_YOURS_PRINCESS",
+    priceId: "price_1S3oIx0sx9RZLNtQYgt1fUNJ",
     images: ["/biggercastle.jpg", "/biggercastle2.webp", "/biggercastle3.webp", "/biggercastle4.webp", "/biggercastle5.webp"],
     image: "/biggercastle.jpg",
     tags: ["Centerpieces", "Birthday"],
