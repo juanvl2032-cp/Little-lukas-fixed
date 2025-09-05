@@ -17,6 +17,7 @@ const PRODUCTS = [
     ],
     image: "/biggercastle.jpg",
     tags: ["Centerpieces", "Birthday"],
+    paymentLink: "https://buy.stripe.com/aFa5kv52K6aX4UJ1OZ7Re0g",
   },
   {
     id: "kitty-box",
