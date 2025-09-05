@@ -1,21 +1,14 @@
-// src/checkout.js
-export async function proceedToCheckout(cartItems) {
-  const res = await fetch('/.netlify/functions/create-checkout-session', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      items: cartItems,
-      success_url: window.location.origin + '/success',
-      cancel_url:  window.location.origin + '/cart',
-    }),
+export async function proceedToCheckout(items) {
+  // items = [{ price: 'price_...', quantity: 1 }, ...]
+  const res = await fetch("/.netlify/functions/create-checkout-session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items }),
   });
-
-  if (!res.ok) {
-    const t = await res.text();
-    alert(`Checkout failed (${res.status}): ${t}`);
-    return;
+  const data = await res.json();
+  if (data?.url) {
+    window.location.href = data.url;
+  } else {
+    alert("Sorry—couldn’t start checkout.");
   }
-
-  const { url } = await res.json();
-  window.location.href = url;
 }
