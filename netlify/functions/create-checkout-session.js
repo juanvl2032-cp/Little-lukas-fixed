@@ -1,4 +1,3 @@
-// CommonJS (works well on Netlify)
 // netlify/functions/create-checkout-session.js
 import Stripe from "stripe";
 
