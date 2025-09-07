@@ -1,6 +1,5 @@
-// src/Storefront.jsx  (rename to match your file if needed)
-import React, { useEffect, useMemo, useState } from "react";
-import { proceedToCheckout } from "./checkout";
+/ src/App.jsx
+import React from "react";
 
 export default function App() {
   return (
@@ -9,13 +8,17 @@ export default function App() {
       <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b border-neutral-200">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-black tracking-tight">Little Lukas Party Shop</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-pink-100 text-pink-700">Handmade & Deals</span>
+            <span className="text-xl font-black tracking-tight">
+              Little Lukas Party Shop
+            </span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-pink-100 text-pink-700">
+              Handmade & Deals
+            </span>
           </div>
         </div>
       </header>
 
-      {/* Banner Section */}
+      {/* Banner */}
       <section className="relative border-b border-neutral-200">
         <img
           src="/shoppic.jpg"
@@ -29,8 +32,10 @@ export default function App() {
         </div>
       </section>
 
-      {/* Catalog (your existing catalog code goes here) */}
-      {/* <section id="catalog"> … </section> */}
+      {/* Catalog placeholder — keep your existing catalog code here */}
+      <section id="catalog" className="max-w-6xl mx-auto px-4 py-6">
+        {/* … your existing product grid … */}
+      </section>
     </main>
   );
 }
