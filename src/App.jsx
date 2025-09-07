@@ -18,7 +18,7 @@ const PRODUCTS = [
     title: "Kitty-Birthday-Party-Goodie-Box",
     description:
       'This kitty-themed goodie box is made of high-quality cardstock, perfect for birthday parties or gifts.\nThis listing is for 10 boxes. Measurements: 7" L × 6" W × 3.25" H. Space for candies/gift: 4.5" diameter × 1.75" H.',
-    priceId: "price_live_REPLACE_WITH_YOURS_KITTYBOX",
+    priceId: "price_1S20Nw0sx9RZLNtQ51waQCos",
     images: ["/kittyhat.webp", "/kittyhat2.webp", "/kittyhat3.webp", "/kittyhat4.webp"],
     image: "/kittyhat.webp",
     tags: ["Party Favors", "Kids", "Handmade"],
@@ -28,7 +28,7 @@ const PRODUCTS = [
     title: "Princess Birthday Party Invitations",
     description:
       'These invitations are perfect for your princess birthday party. Made with high-quality cardstock.\nThis listing is for 10 invitations. Measurements: 8.75" x 4.25"',
-    priceId: "price_live_REPLACE_WITH_YOURS_INVITES",
+    priceId: "price_1S20Kh0sx9RZLNtQ7SQBFbcP",
     images: ["/princessinvitation.webp"],
     image: "/princessinvitation.webp",
     tags: ["Invitations", "Kids", "Handmade"],
@@ -38,7 +38,7 @@ const PRODUCTS = [
     title: "Sonic Inspired Party Hats",
     description:
       "Sonic Inspired Party Hats! This listing is for 10 hats. Handmade with high-quality materials. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.",
-    priceId: "price_live_REPLACE_WITH_YOURS_SONIC_HATS",
+    priceId: "price_1S20Hn0sx9RZLNtQ8LfsTFDI",
     images: ["/sonicshat.jpg"],
     image: "/sonicshat.jpg",
     tags: ["Party Hats", "Kids", "Handmade", "Birthday"],
@@ -48,7 +48,7 @@ const PRODUCTS = [
     title: "Sonic Inspired Goodie Boxes",
     description:
       'Sonic-inspired goodie boxes. This listing is for 10 goodie boxes - H 6.75" x L 3.75" x W 3.75". Boxes hold up to 1/2 lb. If you need to put more weight, you can tape the bottom, and they will hold up to 1 lb.\nBoxes are shipped flat. Candies are not included. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.',
-    priceId: "price_live_REPLACE_WITH_YOURS_SONIC_BOXES",
+    priceId: "price_1S208Z0sx9RZLNtQaUCF5tpi",
     images: ["/sonicsbox.webp"],
     image: "/sonicsbox.webp",
     tags: ["Party Favors", "Kids", "Handmade", "Birthday"],
@@ -58,7 +58,7 @@ const PRODUCTS = [
     title: "Sonic Inspired Party Hat",
     description:
       "Sonic Inspired Party Hat! This listing is for 10 hats. Handmade with high-quality materials. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.",
-    priceId: "price_live_REPLACE_WITH_YOURS_SONIC_SINGLE",
+    priceId: "price_1S205w0sx9RZLNtQDkz5PZaS",
     images: ["/sonichat.webp", "/sonichat2.webp"],
     image: "/sonichat.webp",
     tags: ["Party Hats", "Kids", "Handmade", "Birthday"],
@@ -68,7 +68,7 @@ const PRODUCTS = [
     title: "Sophia the First Inspired Goodie Bags",
     description:
       "This order is for 8 candy bags. Size: 4.7in x 2.8in x 8.9in. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.",
-    priceId: "price_live_REPLACE_WITH_YOURS_SOFIA_BAGS",
+    priceId: "price_1S203e0sx9RZLNtQrUXEWtBd",
     images: ["/sofiab.webp", "/sofiab2.webp"],
     image: "/sofiab.webp",
     tags: ["Party Bags", "Kids", "Handmade", "Birthday"],
