@@ -1,5 +1,6 @@
 // src/App.jsx
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { proceedToCheckout } from "./checkout";
 
 export default function App() {
   return (
@@ -47,8 +48,15 @@ const PRODUCTS = [
     title: "Princess Castle",
     description:
       'This beautiful cardstock castle is perfect for prince/princess birthdays—use as a centerpiece, party favor, decoration, or gift box. Customizable colors. Approx. 14" L × 10" W × 13" H.',
-    priceId: "price_1S3oIx0sx9RZLNtQYgt1fUNJ",
-    images: ["/biggercastle.jpg", "/biggercastle2.webp", "/biggercastle3.webp", "/biggercastle4.webp", "/biggercastle5.webp"],
+    priceId: "price_1S3oIx0sx9RZLNtQYgt1fUNJ", // ← real Stripe Price ID
+    priceUSD: 74.0,                               // ← add display price
+    images: [
+      "/biggercastle.jpg",
+      "/biggercastle2.webp",
+      "/biggercastle3.webp",
+      "/biggercastle4.webp",
+      "/biggercastle5.webp",
+    ],
     image: "/biggercastle.jpg",
     tags: ["Centerpieces", "Birthday"],
   },
@@ -58,6 +66,7 @@ const PRODUCTS = [
     description:
       'This kitty-themed goodie box is made of high-quality cardstock, perfect for birthday parties or gifts.\nThis listing is for 10 boxes. Measurements: 7" L × 6" W × 3.25" H. Space for candies/gift: 4.5" diameter × 1.75" H.',
     priceId: "price_1S20Nw0sx9RZLNtQ51waQCos",
+    priceUSD: 12.0,
     images: ["/kittyhat.webp", "/kittyhat2.webp", "/kittyhat3.webp", "/kittyhat4.webp"],
     image: "/kittyhat.webp",
     tags: ["Party Favors", "Kids", "Handmade"],
@@ -68,6 +77,7 @@ const PRODUCTS = [
     description:
       'These invitations are perfect for your princess birthday party. Made with high-quality cardstock.\nThis listing is for 10 invitations. Measurements: 8.75" x 4.25"',
     priceId: "price_1S20Kh0sx9RZLNtQ7SQBFbcP",
+    priceUSD: 25.0,
     images: ["/princessinvitation.webp"],
     image: "/princessinvitation.webp",
     tags: ["Invitations", "Kids", "Handmade"],
@@ -76,8 +86,9 @@ const PRODUCTS = [
     id: "sonics-hats",
     title: "Sonic Inspired Party Hats",
     description:
-      "Sonic Inspired Party Hats! This listing is for 10 hats. Handmade with high-quality materials. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.",
+      "Sonic Inspired Party Hats! This listing is for 10 hats. Handmade with high-quality materials. Items are for personal use only.",
     priceId: "price_1S20Hn0sx9RZLNtQ8LfsTFDI",
+    priceUSD: 18.0,
     images: ["/sonicshat.jpg"],
     image: "/sonicshat.jpg",
     tags: ["Party Hats", "Kids", "Handmade", "Birthday"],
@@ -86,8 +97,9 @@ const PRODUCTS = [
     id: "sonic-boxes",
     title: "Sonic Inspired Goodie Boxes",
     description:
-      'Sonic-inspired goodie boxes. This listing is for 10 goodie boxes - H 6.75" x L 3.75" x W 3.75". Boxes hold up to 1/2 lb. If you need to put more weight, you can tape the bottom, and they will hold up to 1 lb.\nBoxes are shipped flat. Candies are not included. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.',
+      'Sonic-inspired goodie boxes. This listing is for 10 goodie boxes - H 6.75" x L 3.75" x W 3.75". Boxes are shipped flat. Candies not included.',
     priceId: "price_1S208Z0sx9RZLNtQaUCF5tpi",
+    priceUSD: 16.0,
     images: ["/sonicsbox.webp"],
     image: "/sonicsbox.webp",
     tags: ["Party Favors", "Kids", "Handmade", "Birthday"],
@@ -96,8 +108,9 @@ const PRODUCTS = [
     id: "sonic-hat",
     title: "Sonic Inspired Party Hat",
     description:
-      "Sonic Inspired Party Hat! This listing is for 10 hats. Handmade with high-quality materials. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.",
+      "Sonic Inspired Party Hat! This listing is for 10 hats. Handmade with high-quality materials. Items are for personal use only.",
     priceId: "price_1S205w0sx9RZLNtQDkz5PZaS",
+    priceUSD: 18.0,
     images: ["/sonichat.webp", "/sonichat2.webp"],
     image: "/sonichat.webp",
     tags: ["Party Hats", "Kids", "Handmade", "Birthday"],
@@ -106,38 +119,28 @@ const PRODUCTS = [
     id: "sofia-bag",
     title: "Sophia the First Inspired Goodie Bags",
     description:
-      "This order is for 8 candy bags. Size: 4.7in x 2.8in x 8.9in. These items are not licensed products. We do not claim ownership of characters used. Characters belong to their respective copyright owners. The listing is only for materials, labor, and services. Items are for personal use only and not be resold for any reason.",
+      "This order is for 8 candy bags. Size: 4.7in x 2.8in x 8.9in. Items are for personal use only.",
     priceId: "price_1S203e0sx9RZLNtQrUXEWtBd",
+    priceUSD: 14.0,
     images: ["/sofiab.webp", "/sofiab2.webp"],
     image: "/sofiab.webp",
     tags: ["Party Bags", "Kids", "Handmade", "Birthday"],
   },
 ];
 
-const CURRENCY_SYMBOLS = { usd: "$" };
+const fmtUSD = (n) => `$${Number(n || 0).toFixed(2)}`;
 
-function Storefront({ openCartOnMount = false }) {
-  const urlWantsCart =
-    typeof window !== "undefined" && window.location.pathname === "/cart";
-  const shouldOpenCartOnMount = openCartOnMount || urlWantsCart;
-  
+export default function App() {
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState("All");
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState([]); // [{id, qty}]
   const [openCart, setOpenCart] = useState(false);
-
-  // ✅ auto-open drawer when /cart route passes the prop
-  useEffect(() => {
-    if (shouldOpenCartOnMount) setOpenCart(true);
-  }, [shouldOpenCartOnMount]);
-
   const [lang, setLang] = useState("en");
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [priceMap, setPriceMap] = useState({}); // { [priceId]: { unit_amount, currency } }
 
   const t = (en, es) => (lang === "en" ? en : es);
 
-  // Load saved cart
+  // load/save cart
   useEffect(() => {
     const saved = localStorage.getItem("cart");
     if (saved) setCart(JSON.parse(saved));
@@ -146,37 +149,28 @@ function Storefront({ openCartOnMount = false }) {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // Fetch Stripe prices for display (single source of truth)
-  useEffect(() => {
-    const ids = PRODUCTS.map((p) => p.priceId);
-    fetch("/.netlify/functions/prices", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ priceIds: ids }),
-    })
-      .then((r) => r.json())
-      .then((data) => setPriceMap(data || {}))
-      .catch(() => {});
-  }, []);
-
+  // tags
   const tags = useMemo(() => {
     const all = new Set(["All"]);
-    PRODUCTS.forEach((p) => p.tags.forEach((tag) => all.add(tag)));
+    PRODUCTS.forEach((p) => p.tags?.forEach((tg) => all.add(tg)));
     return Array.from(all);
   }, []);
 
+  // filter
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return PRODUCTS.filter((p) => {
-      const matchesTag = activeTag === "All" || p.tags.includes(activeTag);
-      const matchesQ =
+      const tagOK = activeTag === "All" || p.tags?.includes(activeTag);
+      const qOK =
         !q ||
         p.title.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q);
-      return matchesTag && matchesQ;
+        p.description.toLowerCase().includes(q) ||
+        (p.tags || []).some((tg) => tg.toLowerCase().includes(q));
+      return tagOK && qOK;
     });
-  }, [activeTag, query]);
+  }, [query, activeTag]);
 
+  // cart ops
   function addToCart(id) {
     setCart((prev) => {
       const i = prev.findIndex((x) => x.id === id);
@@ -189,38 +183,31 @@ function Storefront({ openCartOnMount = false }) {
     });
     setOpenCart(true);
   }
-
   function removeFromCart(id) {
     setCart((prev) => prev.filter((i) => i.id !== id));
   }
-
   function updateQty(id, qty) {
-    if (qty <= 0) return removeFromCart(id);
-    setCart((prev) => prev.map((i) => (i.id === id ? { ...i, qty } : i)));
+    const q = Math.max(1, Number(qty || 1));
+    setCart((prev) => prev.map((i) => (i.id === id ? { ...i, qty: q } : i)));
   }
 
-  function fmt(priceId) {
-    const rec = priceMap[priceId];
-    if (!rec) return "$—";
-    const sym = CURRENCY_SYMBOLS[rec.currency] || "$";
-    return `${sym}${(rec.unit_amount / 100).toFixed(2)}`;
-  }
-
-  // Build detailed cart from Stripe prices
-  const cartDetailed = cart.map((l) => {
-    const p = PRODUCTS.find((x) => x.id === l.id);
-    const unit = (priceMap[p.priceId]?.unit_amount ?? 0) / 100;
-    return { ...l, product: p, unitUSD: unit, lineTotalUSD: unit * l.qty };
-  });
+  // detailed cart (using priceUSD for display)
+  const cartDetailed = cart
+    .map((l) => {
+      const p = PRODUCTS.find((x) => x.id === l.id);
+      if (!p) return null;
+      const lineTotalUSD = (p.priceUSD || 0) * (l.qty || 1);
+      return { ...l, product: p, lineTotalUSD };
+    })
+    .filter(Boolean);
 
   const subtotalUSD = cartDetailed.reduce((s, l) => s + l.lineTotalUSD, 0);
-  // Display-only shipping/tax (final truth at Checkout)
-  const shippingUSD = subtotalUSD === 0 ? 0 : 6.99;
-  const taxUSD = subtotalUSD * 0.0825;
-  const totalUSD = subtotalUSD + shippingUSD + taxUSD;
+  const taxUSD = subtotalUSD * 0.0825; // example 8.25%
+  const shippingUSD = subtotalUSD ? 6.99 : 0; // example
+  const totalUSD = subtotalUSD + taxUSD + shippingUSD;
 
+  // Stripe checkout: send ONLY Price IDs + quantities
   function startCheckout() {
-    // Use Stripe Price IDs only
     const items = cartDetailed.map((item) => ({
       price: item.product.priceId,
       quantity: Number(item.qty || 1),
@@ -249,12 +236,19 @@ function Storefront({ openCartOnMount = false }) {
               />
               <span className="absolute right-2 top-2.5 text-neutral-400">⌕</span>
             </div>
-            <select value={lang} onChange={(e) => setLang(e.target.value)} className="rounded-xl border border-neutral-300 px-2 py-2">
+            <select
+              value={lang}
+              onChange={(e) => setLang(e.target.value)}
+              className="rounded-xl border border-neutral-300 px-2 py-2"
+            >
               <option value="en">EN</option>
               <option value="es">ES</option>
             </select>
             <span className="rounded-xl border border-neutral-300 px-2 py-2 text-sm">USD</span>
-            <button onClick={() => setOpenCart(true)} className="relative rounded-xl border border-neutral-300 px-3 py-2 hover:bg-neutral-100">
+            <button
+              onClick={() => setOpenCart(true)}
+              className="relative rounded-xl border border-neutral-300 px-3 py-2 hover:bg-neutral-100"
+            >
               🛒
               {cart.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full px-1.5">
@@ -265,6 +259,20 @@ function Storefront({ openCartOnMount = false }) {
           </div>
         </div>
       </header>
+
+      {/* Banner */}
+      <section className="relative border-b border-neutral-200">
+        <img
+          src="/shoppic.jpg"
+          alt="Little Lukas Party Shop banner"
+          className="w-full h-44 md:h-60 lg:h-72 object-cover"
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <h1 className="text-white text-3xl md:text-5xl font-extrabold drop-shadow">
+            Little Lukas Party Shop
+          </h1>
+        </div>
+      </section>
 
       {/* Catalog */}
       <section id="catalog" className="max-w-6xl mx-auto px-4 py-6">
@@ -293,8 +301,9 @@ function Storefront({ openCartOnMount = false }) {
               <div className="p-4">
                 <h3 className="font-semibold text-lg group-hover:underline underline-offset-4">{p.title}</h3>
                 <p className="text-sm text-neutral-600 line-clamp-2 mt-1">{p.description}</p>
+
                 <div className="mt-3 flex items-center justify-between">
-                  <strong className="text-xl">{fmt(p.priceId)}</strong>
+                  <strong className="text-xl">{fmtUSD(p.priceUSD)}</strong>
                   <div className="flex gap-2">
                     <button
                       onClick={(e) => {
@@ -320,7 +329,7 @@ function Storefront({ openCartOnMount = false }) {
                 </div>
 
                 <div className="mt-3 flex flex-wrap gap-1">
-                  {p.tags.map((tag) => (
+                  {p.tags?.map((tag) => (
                     <span key={tag} className="text-xs px-2 py-1 rounded-full bg-neutral-100 border border-neutral-200">
                       {tag}
                     </span>
@@ -341,8 +350,8 @@ function Storefront({ openCartOnMount = false }) {
           >
             <h2 className="text-2xl font-bold mb-4">{selectedProduct.title}</h2>
             <div className="grid grid-cols-2 gap-4 mb-4">
-              {selectedProduct.images.map((img, index) => (
-                <img key={index} src={img} alt={`${selectedProduct.title} image ${index + 1}`} className="w-full h-48 object-cover rounded" />
+              {(selectedProduct.images || [selectedProduct.image]).map((img, i) => (
+                <img key={i} src={img} alt={`${selectedProduct.title} ${i + 1}`} className="w-full h-48 object-cover rounded" />
               ))}
             </div>
             <p className="text-neutral-700 mb-4">{selectedProduct.description}</p>
@@ -384,7 +393,7 @@ function Storefront({ openCartOnMount = false }) {
                     />
                     <div className="flex-1">
                       <div className="font-semibold">{line.product.title}</div>
-                      <div className="text-sm text-neutral-600">{fmt(line.product.priceId)}</div>
+                      <div className="text-sm text-neutral-600">{fmtUSD(line.product.priceUSD)}</div>
                       <div className="mt-1 flex items-center gap-2 text-sm">
                         <label>{t("Qty", "Cant.")}</label>
                         <input
@@ -397,7 +406,7 @@ function Storefront({ openCartOnMount = false }) {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold">{`$${line.lineTotalUSD.toFixed(2)}`}</div>
+                      <div className="font-semibold">{fmtUSD(line.lineTotalUSD)}</div>
                       <button className="text-xs text-red-600 underline mt-1" onClick={() => removeFromCart(line.id)}>
                         {t("Remove", "Quitar")}
                       </button>
@@ -408,10 +417,12 @@ function Storefront({ openCartOnMount = false }) {
             </div>
 
             <div className="border-t pt-4 space-y-2 text-sm">
-              <div className="flex items-center justify-between"><span>{t("Subtotal", "Subtotal")}</span><span>{`$${subtotalUSD.toFixed(2)}`}</span></div>
-              <div className="flex items-center justify-between"><span>{t("Estimated tax", "Impuesto estimado")}</span><span>{`$${taxUSD.toFixed(2)}`}</span></div>
-              <div className="flex items-center justify-between"><span>{t("Shipping", "Envío")}</span><span>{subtotalUSD === 0 ? t("Free", "Gratis") : `$${shippingUSD.toFixed(2)}`}</span></div>
-              <div className="flex items-center justify-between font-bold text-base pt-2"><span>{t("Total", "Total")}</span><span>{`$${totalUSD.toFixed(2)}`}</span></div>
+              <div className="flex items-center justify-between"><span>{t("Subtotal", "Subtotal")}</span><span>{fmtUSD(subtotalUSD)}</span></div>
+              <div className="flex items-center justify-between"><span>{t("Estimated tax", "Impuesto estimado")}</span><span>{fmtUSD(taxUSD)}</span></div>
+              <div className="flex items-center justify-between"><span>{t("Shipping", "Envío")}</span>
+                <span>{subtotalUSD === 0 ? t("Free", "Gratis") : fmtUSD(shippingUSD)}</span>
+              </div>
+              <div className="flex items-center justify-between font-bold text-base pt-2"><span>{t("Total", "Total")}</span><span>{fmtUSD(totalUSD)}</span></div>
 
               {cartDetailed.length > 0 && (
                 <button onClick={startCheckout} className="w-full mt-2 rounded-2xl bg-pink-600 text-white px-4 py-3 font-semibold hover:bg-pink-700">
