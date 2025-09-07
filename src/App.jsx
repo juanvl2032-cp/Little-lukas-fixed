@@ -2,45 +2,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { proceedToCheckout } from "./checkout";
 
-export default function App() {
-  return (
-    <main className="min-h-screen bg-neutral-50 text-neutral-900">
-      {/* Header */}
-      <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b border-neutral-200">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-black tracking-tight">
-              Little Lukas Party Shop
-            </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-pink-100 text-pink-700">
-              Handmade & Deals
-            </span>
-          </div>
-        </div>
-      </header>
-
-      {/* Banner */}
-      <section className="relative border-b border-neutral-200">
-        <img
-          src="/shoppic.jpg"
-          alt="Little Lukas Party Shop banner"
-          className="w-full h-44 md:h-60 lg:h-72 object-cover"
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="text-white text-3xl md:text-5xl font-extrabold drop-shadow">
-            Little Lukas Party Shop
-          </h1>
-        </div>
-      </section>
-
-      {/* Catalog placeholder — put your existing product grid here */}
-      <section id="catalog" className="max-w-6xl mx-auto px-4 py-6">
-        {/* ... your product cards / filters ... */}
-      </section>
-    </main>
-  );
-}
-
 // 🔒 Source of truth is Stripe Price IDs (display values fetched from your Netlify function)
 const PRODUCTS = [
   {
