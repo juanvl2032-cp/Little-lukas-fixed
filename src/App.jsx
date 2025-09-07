@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { proceedToCheckout } from "./checkout"; // posts to /.netlify/functions/create-checkout-session
 
-// 🔒 Only Price IDs here (source of truth = Stripe)
+// 🔒 Only Stripe Price IDs here (source of truth = Stripe)
 const PRODUCTS = [
   {
     id: "princess-castle",
@@ -77,11 +77,11 @@ const PRODUCTS = [
 
 const CURRENCY_SYMBOLS = { usd: "$" };
 
-export default function Storefront() {
+export default function Storefront({ openCartOnMount = false }) {
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState("All");
   const [cart, setCart] = useState([]);
-  const [openCart, setOpenCart] = useState(false);
+  const [openCart, setOpenCart] = useState(openCartOnMount);
   const [lang, setLang] = useState("en");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [priceMap, setPriceMap] = useState({}); // {priceId: {unit_amount, currency}}
