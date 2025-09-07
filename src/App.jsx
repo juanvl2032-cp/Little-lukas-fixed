@@ -224,7 +224,7 @@ export default function App() {
       {/* Banner */}
       <section className="relative border-b border-neutral-200">
         <img
-          src="/shoppic.jpg"
+          src="/shoppic1.jpg"
           alt="Little Lukas Party Shop banner"
           className="w-full h-44 md:h-60 lg:h-72 object-cover"
         />
