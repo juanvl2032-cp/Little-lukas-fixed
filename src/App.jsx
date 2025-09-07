@@ -227,6 +227,10 @@ export default function App() {
           src="/shoppic1.png"
           alt="Little Lukas Party Shop banner"
           className="w-full h-44 md:h-60 lg:h-72 object-cover"
+          style={{ objectPosition: '50% 30%' }}   // tweak this to shift focus
+  loading="eager"
+  decoding="async"
+/>
         />
         <div className="absolute inset-0 flex items-center justify-center">
           <h1 className="text-white text-3xl md:text-5xl font-extrabold drop-shadow">
