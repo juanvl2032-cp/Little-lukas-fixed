@@ -2,10 +2,20 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { proceedToCheckout } from "./checkout";
 
-export default function Storefront() {
+export default function App() {
   return (
-    <main>
-      {/* 🔹 Banner Section */}
+    <main className="min-h-screen bg-neutral-50 text-neutral-900">
+      {/* Header */}
+      <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b border-neutral-200">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-black tracking-tight">Little Lukas Party Shop</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-pink-100 text-pink-700">Handmade & Deals</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Banner Section */}
       <section className="relative border-b border-neutral-200">
         <img
           src="/shoppic.jpg"
@@ -19,10 +29,8 @@ export default function Storefront() {
         </div>
       </section>
 
-      {/* 🔹 Products Section */}
-      <section className="p-6 grid gap-6 md:grid-cols-3">
-        {/* Your product cards go here */}
-      </section>
+      {/* Catalog (your existing catalog code goes here) */}
+      {/* <section id="catalog"> … </section> */}
     </main>
   );
 }
