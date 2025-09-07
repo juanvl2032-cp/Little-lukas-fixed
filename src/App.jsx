@@ -1,4 +1,4 @@
-/ src/App.jsx
+// src/App.jsx
 import React from "react";
 
 export default function App() {
@@ -32,9 +32,9 @@ export default function App() {
         </div>
       </section>
 
-      {/* Catalog placeholder — keep your existing catalog code here */}
+      {/* Catalog placeholder */}
       <section id="catalog" className="max-w-6xl mx-auto px-4 py-6">
-        {/* … your existing product grid … */}
+        {/* … your product grid … */}
       </section>
     </main>
   );
