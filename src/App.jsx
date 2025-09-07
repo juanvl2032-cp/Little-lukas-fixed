@@ -32,9 +32,9 @@ export default function App() {
         </div>
       </section>
 
-      {/* Catalog placeholder */}
+      {/* Catalog placeholder — put your existing product grid here */}
       <section id="catalog" className="max-w-6xl mx-auto px-4 py-6">
-        {/* … your product grid … */}
+        {/* ... your product cards / filters ... */}
       </section>
     </main>
   );
@@ -116,7 +116,7 @@ const PRODUCTS = [
 
 const CURRENCY_SYMBOLS = { usd: "$" };
 
-export default function Storefront({ openCartOnMount = false }) {
+function Storefront({ openCartOnMount = false }) {
   const urlWantsCart =
     typeof window !== "undefined" && window.location.pathname === "/cart";
   const shouldOpenCartOnMount = openCartOnMount || urlWantsCart;
