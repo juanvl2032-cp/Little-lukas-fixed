@@ -1,10 +1,9 @@
-# netlify.toml  (place at the project root)
-
+# netlify.toml  (project root)
 [build]
   command = "npm run build"
   publish = "dist"
 
-# Where your serverless functions live
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+  external_node_modules = ["stripe"]   
