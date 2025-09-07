@@ -1,7 +1,8 @@
+// src/Storefront.jsx  (rename to match your file if needed)
 import React, { useEffect, useMemo, useState } from "react";
-import { proceedToCheckout } from "./checkout"; // posts to /.netlify/functions/create-checkout-session
+import { proceedToCheckout } from "./checkout";
 
-// 🔒 Only Stripe Price IDs here (source of truth = Stripe)
+// 🔒 Source of truth is Stripe Price IDs (display values fetched from your Netlify function)
 const PRODUCTS = [
   {
     id: "princess-castle",
@@ -82,9 +83,15 @@ export default function Storefront({ openCartOnMount = false }) {
   const [activeTag, setActiveTag] = useState("All");
   const [cart, setCart] = useState([]);
   const [openCart, setOpenCart] = useState(openCartOnMount);
+
+  // ✅ auto-open drawer when /cart route passes the prop
+  useEffect(() => {
+    if (openCartOnMount) setOpenCart(true);
+  }, [openCartOnMount]);
+
   const [lang, setLang] = useState("en");
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [priceMap, setPriceMap] = useState({}); // {priceId: {unit_amount, currency}}
+  const [priceMap, setPriceMap] = useState({}); // { [priceId]: { unit_amount, currency } }
 
   const t = (en, es) => (lang === "en" ? en : es);
 
@@ -140,9 +147,11 @@ export default function Storefront({ openCartOnMount = false }) {
     });
     setOpenCart(true);
   }
+
   function removeFromCart(id) {
     setCart((prev) => prev.filter((i) => i.id !== id));
   }
+
   function updateQty(id, qty) {
     if (qty <= 0) return removeFromCart(id);
     setCart((prev) => prev.map((i) => (i.id === id ? { ...i, qty } : i)));
@@ -284,7 +293,10 @@ export default function Storefront({ openCartOnMount = false }) {
       {/* Product modal */}
       {selectedProduct && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={() => setSelectedProduct(null)}>
-          <div className="bg-white p-6 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="bg-white p-6 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <h2 className="text-2xl font-bold mb-4">{selectedProduct.title}</h2>
             <div className="grid grid-cols-2 gap-4 mb-4">
               {selectedProduct.images.map((img, index) => (
@@ -323,7 +335,11 @@ export default function Storefront({ openCartOnMount = false }) {
               ) : (
                 cartDetailed.map((line) => (
                   <div key={line.id} className="flex gap-3 border-b pb-3">
-                    <img src={line.product.images?.[0] ?? line.product.image} alt={line.product.title} className="w-16 h-16 object-cover rounded" />
+                    <img
+                      src={line.product.images?.[0] ?? line.product.image}
+                      alt={line.product.title}
+                      className="w-16 h-16 object-cover rounded"
+                    />
                     <div className="flex-1">
                       <div className="font-semibold">{line.product.title}</div>
                       <div className="text-sm text-neutral-600">{fmt(line.product.priceId)}</div>
