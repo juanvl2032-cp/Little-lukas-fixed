@@ -2,6 +2,31 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { proceedToCheckout } from "./checkout";
 
+export default function Storefront() {
+  return (
+    <main>
+      {/* 🔹 Banner Section */}
+      <section className="relative border-b border-neutral-200">
+        <img
+          src="/shoppic.jpg"
+          alt="Little Lukas Party Shop banner"
+          className="w-full h-44 md:h-60 lg:h-72 object-cover"
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <h1 className="text-white text-3xl md:text-5xl font-extrabold drop-shadow">
+            Little Lukas Party Shop
+          </h1>
+        </div>
+      </section>
+
+      {/* 🔹 Products Section */}
+      <section className="p-6 grid gap-6 md:grid-cols-3">
+        {/* Your product cards go here */}
+      </section>
+    </main>
+  );
+}
+
 // 🔒 Source of truth is Stripe Price IDs (display values fetched from your Netlify function)
 const PRODUCTS = [
   {
