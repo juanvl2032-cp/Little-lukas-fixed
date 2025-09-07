@@ -1,4 +1,3 @@
-// src/checkout.js
 export async function proceedToCheckout(items) {
   const res = await fetch("/.netlify/functions/create-checkout-session", {
     method: "POST",
@@ -6,8 +5,9 @@ export async function proceedToCheckout(items) {
     body: JSON.stringify({ items }),
   });
   const data = await res.json();
-  if (res.ok && data?.url) window.location.href = data.url;
-  else {
+  if (res.ok && data?.url) {
+    window.location.href = data.url;
+  } else {
     console.error("Checkout error:", data);
     alert("Checkout failed: " + (data?.error || "See console"));
   }
