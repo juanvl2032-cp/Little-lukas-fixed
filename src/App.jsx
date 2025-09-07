@@ -79,15 +79,19 @@ const PRODUCTS = [
 const CURRENCY_SYMBOLS = { usd: "$" };
 
 export default function Storefront({ openCartOnMount = false }) {
+  const urlWantsCart =
+    typeof window !== "undefined" && window.location.pathname === "/cart";
+  const shouldOpenCartOnMount = openCartOnMount || urlWantsCart;
+  
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState("All");
   const [cart, setCart] = useState([]);
-  const [openCart, setOpenCart] = useState(openCartOnMount);
+  const [openCart, setOpenCart] = useState(false);
 
   // ✅ auto-open drawer when /cart route passes the prop
   useEffect(() => {
-    if (openCartOnMount) setOpenCart(true);
-  }, [openCartOnMount]);
+    if (shouldOpenCartOnMount) setOpenCart(true);
+  }, [shouldOpenCartOnMount]);
 
   const [lang, setLang] = useState("en");
   const [selectedProduct, setSelectedProduct] = useState(null);
