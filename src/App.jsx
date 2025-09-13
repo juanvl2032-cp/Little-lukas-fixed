@@ -227,7 +227,7 @@ export default function App() {
           src="/shoppic1.png"
           alt="Little Lukas Party Shop banner"
           className="w-full h-44 md:h-60 lg:h-72 object-cover"
-          style={{ objectPosition: '250% 60%' }}   // tweak this to shift focus
+          style={{ objectPosition: '200% 60%' }}   // tweak this to shift focus
   loading="eager"
   decoding="async"
 
